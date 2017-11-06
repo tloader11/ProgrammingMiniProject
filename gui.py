@@ -1,5 +1,9 @@
+import base64
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image, ImageTk
+
+import io
 
 LARGE_FONT=("Verdana", 12)
 
@@ -31,10 +35,16 @@ class StartPage(tk.Frame):
         titelLabel = tk.Label(self, bg="#FFCC18", anchor=tk.W, justify=tk.LEFT, text="NS-Fietsenstalling", font=LARGE_FONT)
         titelLabel.pack(pady=10, padx=10)
 
-        registerButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, text="Registreer", command=lambda: controller.show_frame(RegisterPage))
-        stallButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, text="Stal fiets", command=lambda: controller.show_frame(StallPage))
-        pickupButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
-        infoButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
+        image = Image.open("NS.jpg")
+        photoholder = ImageTk.PhotoImage(image)
+        photo = tk.Label(self, image = photoholder)
+        photo.image = photoholder
+        photo.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.YES)
+
+        registerButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Registreer", command=lambda: controller.show_frame(RegisterPage))
+        stallButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Stal fiets", command=lambda: controller.show_frame(StallPage))
+        pickupButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
+        infoButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
 
         registerButton.pack(side=tk.LEFT)
         stallButton.pack(side=tk.LEFT)
