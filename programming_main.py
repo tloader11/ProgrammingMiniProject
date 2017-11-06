@@ -13,7 +13,7 @@ def Register(name,tel,sex,bday):
         result = c.execute(check_sql)
     sql = "insert into users (name,tel,sex,bday,code) VALUES ('"+name+"','"+tel+"',"+str(sex)+",'"+bday+"',"+str(code)+")"
     c.execute(sql)
-    print(code,"is de code voor",name)
+    print(code," is de code voor ",name)
     conn.commit()
 
 def Stall(code):
@@ -21,7 +21,7 @@ def Stall(code):
     timestamp = time.time()
     sql = "insert into storage (code,timestamp) VALUES ("+str(code)+","+str(round(timestamp))+")"
     c.execute(sql)
-    print(code,"heeft een fiets gestald op",timestamp)
+    print(code," heeft een fiets gestald op ",timestamp)
     conn.commit()
 
 def BikePickup(code):
