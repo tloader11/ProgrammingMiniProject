@@ -13,7 +13,7 @@ class NSFietsenstalling(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         #tk.Tk.iconbitmap(self, default="")
         tk.Tk.wm_title(self, "NS-Fietsenstalling")
-        tk.Tk.wm_geometry(self,"700x455")
+        tk.Tk.wm_geometry(self,"700x455")       #fixed screen diameters
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
