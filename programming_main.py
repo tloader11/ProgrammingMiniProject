@@ -48,6 +48,14 @@ def CheckAuth(code, tel):
             return True
     return False
 
+def GetUserInfo(code,tel):
+    if CheckAuth(code, tel):
+        user_sql = "SELECT * FROM users WHERE code="+str(code)
+        c.execute(user_sql)
+        rows = c.fetchall()
+        if len(rows) > 0:
+            user = rows[0]
+            return user
 
 if CheckAuth(8470486, "+31620471504"):
     print("Succesvol gecheckt")
