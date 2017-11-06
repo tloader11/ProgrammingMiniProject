@@ -27,14 +27,14 @@ class NSFietsenstalling(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.configure(bg='yellow')
-        titelLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT)
+        self.configure(bg='#FFCC18')
+        titelLabel = tk.Label(self, bg="#FFCC18", text="NS-Fietsenstalling", font=LARGE_FONT)
         titelLabel.pack(pady=10, padx=10)
 
-        registerButton = ttk.Button(self, text="Registreer", command=lambda: controller.show_frame(RegisterPage))
-        stallButton = ttk.Button(self, text="Stal fiets", command=lambda: controller.show_frame(StallPage))
-        pickupButton = ttk.Button(self, text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
-        infoButton = ttk.Button(self, text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
+        registerButton = tk.Button(self, height=5, width=20, text="Registreer", command=lambda: controller.show_frame(RegisterPage))
+        stallButton = tk.Button(self, height=5, width=20, text="Stal fiets", command=lambda: controller.show_frame(StallPage))
+        pickupButton = tk.Button(self, height=5, width=20, text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
+        infoButton = tk.Button(self, height=5, width=20, text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
 
         registerButton.pack()
         stallButton.pack()
