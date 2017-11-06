@@ -13,6 +13,7 @@ class NSFietsenstalling(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         #tk.Tk.iconbitmap(self, default="")
         tk.Tk.wm_title(self, "NS-Fietsenstalling")
+        tk.Tk.wm_geometry(self,"700x455")
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -41,15 +42,15 @@ class StartPage(tk.Frame):
         photo.image = photoholder
         photo.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.YES)
 
-        registerButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Registreer", command=lambda: controller.show_frame(RegisterPage))
-        stallButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Stal fiets", command=lambda: controller.show_frame(StallPage))
-        pickupButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
-        infoButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
+        registerButton = tk.Button(self, height=5, width=23, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Registreer", command=lambda: controller.show_frame(RegisterPage))
+        stallButton = tk.Button(self, height=5, width=25, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Stal fiets", command=lambda: controller.show_frame(StallPage))
+        pickupButton = tk.Button(self, height=5, width=25, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
+        infoButton = tk.Button(self, height=5, width=22, justify=tk.LEFT, bg="#011466", fg="#FFFFFF", text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
 
-        registerButton.pack(side=tk.LEFT)
-        stallButton.pack(side=tk.LEFT)
-        pickupButton.pack(side=tk.LEFT)
-        infoButton.pack(side=tk.LEFT)
+        registerButton.pack(fill=tk.BOTH,side=tk.LEFT)
+        stallButton.pack(fill=tk.BOTH,side=tk.LEFT)
+        pickupButton.pack(fill=tk.BOTH,side=tk.LEFT)
+        infoButton.pack(fill=tk.BOTH,side=tk.LEFT)
 
 class RegisterPage(tk.Frame):
     def __init__(self, parent, controller):
