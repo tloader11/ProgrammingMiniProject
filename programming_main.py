@@ -24,7 +24,43 @@ def Stall(code):
     print(code," heeft een fiets gestald op ",timestamp)
     conn.commit()
 
+def BikePickup(code):
+    global c, conn
+    sql = "DELETE FROM storage WHERE code="+str(code)
+    c.execute(sql)
+    print(code,"heeft zijn fiets opgehaald.")
+    conn.commit()
+
+def LogAction(text):
+    global c, conn
+    sql = "INSERT INTO log (text) VALUES ("+text+")"
+    c.execute(sql)
+    conn.commit()
+
+def CheckAuth(code, tel):
+    global c, conn
+    user_sql = "SELECT * FROM users WHERE code="+str(code)
+    c.execute(user_sql)
+    rows = c.fetchall()
+    if len(rows) > 0:
+        user = rows[0]
+        if user[2] == tel:
+            return True
+    return False
+
+def GetUserInfo(code,tel):
+    if CheckAuth(code, tel):
+        user_sql = "SELECT * FROM users WHERE code="+str(code)
+        c.execute(user_sql)
+        rows = c.fetchall()
+        if len(rows) > 0:
+            user = rows[0]
+            return user
+
+if CheckAuth(8470486, "+31620471504"):
+    print("Succesvol gecheckt")
 
 #Register("Tristan ter Haar","+31620471504",1,"15-04-1998")
-Stall(8470486)
+#Stall(8470486)
+#BikePickup(8470486)
 conn.close()
