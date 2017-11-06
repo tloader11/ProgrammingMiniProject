@@ -24,6 +24,7 @@ def Stall(code):
     print(code,"heeft een fiets gestald op",timestamp)
     conn.commit()
 
+test = "test"
 
 #Register("Tristan ter Haar","+31620471504",1,"15-04-1998")
 Stall(8470486)
