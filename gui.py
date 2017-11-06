@@ -28,18 +28,18 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.configure(bg='#FFCC18')
-        titelLabel = tk.Label(self, bg="#FFCC18", text="NS-Fietsenstalling", font=LARGE_FONT)
+        titelLabel = tk.Label(self, bg="#FFCC18", anchor=tk.W, justify=tk.LEFT, text="NS-Fietsenstalling", font=LARGE_FONT)
         titelLabel.pack(pady=10, padx=10)
 
-        registerButton = tk.Button(self, height=5, width=20, text="Registreer", command=lambda: controller.show_frame(RegisterPage))
-        stallButton = tk.Button(self, height=5, width=20, text="Stal fiets", command=lambda: controller.show_frame(StallPage))
-        pickupButton = tk.Button(self, height=5, width=20, text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
-        infoButton = tk.Button(self, height=5, width=20, text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
+        registerButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, text="Registreer", command=lambda: controller.show_frame(RegisterPage))
+        stallButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, text="Stal fiets", command=lambda: controller.show_frame(StallPage))
+        pickupButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
+        infoButton = tk.Button(self, height=5, width=20, justify=tk.LEFT, text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
 
-        registerButton.pack()
-        stallButton.pack()
-        pickupButton.pack()
-        infoButton.pack()
+        registerButton.pack(side=tk.LEFT)
+        stallButton.pack(side=tk.LEFT)
+        pickupButton.pack(side=tk.LEFT)
+        infoButton.pack(side=tk.LEFT)
 
 class RegisterPage(tk.Frame):
     def __init__(self, parent, controller):
