@@ -2,6 +2,8 @@ import base64
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
+from programming_main import *
+from tkinter import messagebox
 
 import io
 
@@ -11,7 +13,8 @@ button_background_color="#1D0065"
 button_foreground_color="white"
 button_active_background_color="#005ca0"
 
-
+# example code = 8470486
+# example bday = 15-04-1998
 class NSFietsenstalling(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -73,9 +76,17 @@ class RegisterPage(tk.Frame):
 
 class StallPage(tk.Frame):
     def StallBike(self, controller, code, bday):
-        print(code,bday)
-        controller.show_frame(StartPage)
-        pass
+        code_text = code.get("1.0",tk.END)[:-1]
+        bday_text = bday.get("1.0",tk.END)[:-1]
+        print(code_text)
+        print(bday_text)
+        bday.delete("1.0",tk.END)
+        code.delete("1.0",tk.END)
+        if CheckAuth(code_text,bday_text):
+            Stall(code)
+            controller.show_frame(StartPage)
+        else:
+            messagebox.showerror("Ongeldig", message="Ongeldige code / geboortedatum combinatie")
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -93,7 +104,7 @@ class StallPage(tk.Frame):
         bday = tk.Text(self, height=1, width=15)
         bday.grid(row=2,pady=10, padx=10,column=1, sticky=tk.W)
 
-        stallButton = tk.Button(self, height=4, width=30, text="Zet fiets in stalling", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: self.StallBike(controller, code.get("1.0",tk.END), bday.get("1.0",tk.END)))
+        stallButton = tk.Button(self, height=4, width=30, text="Zet fiets in stalling", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: self.StallBike(controller, code, bday))
         stallButton.grid(row=3, column=0, columnspan=3, pady=30)
 
         homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))

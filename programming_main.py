@@ -37,14 +37,14 @@ def LogAction(text):
     c.execute(sql)
     conn.commit()
 
-def CheckAuth(code, tel):
+def CheckAuth(code, bday):
     global c, conn
     user_sql = "SELECT * FROM users WHERE code="+str(code)
     c.execute(user_sql)
     rows = c.fetchall()
     if len(rows) > 0:
         user = rows[0]
-        if user[2] == tel:
+        if user[4] == bday:
             return True
     return False
 
@@ -57,10 +57,10 @@ def GetUserInfo(code,tel):
             user = rows[0]
             return user
 
-if CheckAuth(8470486, "+31620471504"):
+if CheckAuth(8470486, "15-04-1998"):
     print("Succesvol gecheckt")
 
 #Register("Tristan ter Haar","+31620471504",1,"15-04-1998")
 #Stall(8470486)
 #BikePickup(8470486)
-conn.close()
+#conn.close()
