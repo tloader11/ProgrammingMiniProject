@@ -26,7 +26,7 @@ class NSFietsenstalling(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         self.frames = {}
-        for F in (StartPage, RegisterPage, StallPage, PickupPage, InfoPage):
+        for F in (StartPage, RegisterPage, StallPage, PickupPage, InfoPage, GeneralInfoPage, PersonalInfoPage):
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -78,10 +78,10 @@ class StartPage(tk.Frame):
         pickupButton = tk.Button(self, height=5, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
         infoButton = tk.Button(self, height=5, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
 
-        registerButton.grid(row=2, column=0, sticky=tk.EW)
-        stallButton.grid(row=2,column=1, sticky=tk.EW)
-        pickupButton.grid(row=2,column=2, sticky=tk.EW)
-        infoButton.grid(row=2,column=3, sticky=tk.EW)
+        registerButton.grid(row=2, column=0, sticky=tk.NSEW)
+        stallButton.grid(row=2,column=1, sticky=tk.NSEW)
+        pickupButton.grid(row=2,column=2, sticky=tk.NSEW)
+        infoButton.grid(row=2,column=3, sticky=tk.NSEW)
         #registerButton.pack(fill=tk.BOTH, side=tk.LEFT)
         #stallButton.pack(fill=tk.BOTH, side=tk.LEFT)
         #pickupButton.pack(fill=tk.BOTH, side=tk.LEFT)
@@ -243,12 +243,54 @@ class InfoPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         self.configure(background=background_color)
-        titelLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
-        titelLabel.pack(pady=10, padx=10)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+
+        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
+        titleLabel.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
+
+        GeneralInfoButton = tk.Button(self, height=4, background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", text="Algemene informatie", command=lambda: controller.show_frame(GeneralInfoPage))
+        GeneralInfoButton.grid(row=1, column=0, padx=10, pady=10, sticky=tk.EW+tk.S)
+        personalInfoButton = tk.Button(self, height=4, background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", text="Persoonlijke informatie", command=lambda: controller.show_frame(PersonalInfoPage))
+        personalInfoButton.grid(row=1, column=1, padx=10, pady=10, sticky=tk.EW+tk.S)
 
         homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
+        homeButton.grid(row=2, column=0, columnspan=2, sticky=tk.EW+tk.S)
 
-        homeButton.pack(fill=tk.BOTH,side=tk.BOTTOM)
+class GeneralInfoPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        self.configure(background=background_color)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+
+        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
+        titleLabel.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
+
+        homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
+        homeButton.grid(row=2, column=0, columnspan=2, sticky=tk.EW+tk.S)
+
+class PersonalInfoPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        self.configure(background=background_color)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+
+        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
+        titleLabel.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
+
+        homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
+        homeButton.grid(row=2, column=0, columnspan=2, sticky=tk.EW+tk.S)
+
 
 app = NSFietsenstalling()
 app.mainloop()
