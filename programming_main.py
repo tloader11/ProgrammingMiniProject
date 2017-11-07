@@ -15,6 +15,7 @@ def Register(name,tel,sex,bday):
     c.execute(sql)
     print(code,"is de code voor",name)
     conn.commit()
+    return code
 
 def Stall(code):
     global c, conn
