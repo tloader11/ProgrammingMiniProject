@@ -1,12 +1,9 @@
-import base64
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from programming_main import *
 from tkinter import messagebox
 import re
-
-import io
 
 LARGE_FONT=("Verdana", 12)
 background_color="#F6D03F"
@@ -20,10 +17,10 @@ class NSFietsenstalling(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-        #tk.Tk.iconbitmap(self, default="")
+        tk.Tk.iconbitmap(self, default="favicon.png")
         tk.Tk.wm_title(self, "NS-Fietsenstalling")
-        tk.Tk.wm_geometry(self,"700x455")       #fixed screen diameters
-        tk.Tk.resizable(self, False, False)
+        tk.Tk.wm_geometry(self,"700x455")       #start screen diameters
+        #tk.Tk.resizable(self, False, False)
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -40,28 +37,55 @@ class NSFietsenstalling(tk.Tk):
         frame.tkraise()
 
 class StartPage(tk.Frame):
+
+    def _resize_image(self,event):
+
+        new_width = event.width
+        new_height = event.height - 10
+        self.image = self.img_copy.resize((new_width, new_height))
+        self.photoholder = ImageTk.PhotoImage(self.image)
+        self.photo.configure(image =  self.photoholder)
+
     def __init__(self, parent, controller):
+
+        self.image = Image.open("NS_new.jpg")
+        self.img_copy= self.image.copy()
+
         tk.Frame.__init__(self, parent)
 
         self.configure(background=background_color)
-        titelLabel = tk.Label(self, bg=background_color, anchor=tk.W, justify=tk.LEFT, text="NS-Fietsenstalling", font=LARGE_FONT)
-        titelLabel.pack(pady=10, padx=10)
 
-        image = Image.open("NS.jpg")
-        photoholder = ImageTk.PhotoImage(image)
-        photo = tk.Label(self, image=photoholder)
-        photo.image = photoholder
-        photo.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.YES)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1, uniform="fred")
+        self.grid_columnconfigure(1, weight=1, uniform="fred")
+        self.grid_columnconfigure(3, weight=1, uniform="fred")
+        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
+        titleLabel.grid(row=0, column=0, columnspan=4, pady=10, padx=10)
+        #titelLabel = tk.Label(self, bg=background_color, anchor=tk.W, justify=tk.LEFT, text="NS-Fietsenstalling", font=LARGE_FONT)
+        #titelLabel.pack(pady=10, padx=10)
 
-        registerButton = tk.Button(self, height=5, width=23, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Registreer", command=lambda: controller.show_frame(RegisterPage))
-        stallButton = tk.Button(self, height=5, width=25, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Stal fiets", command=lambda: controller.show_frame(StallPage))
-        pickupButton = tk.Button(self, height=5, width=25, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
-        infoButton = tk.Button(self, height=5, width=22, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
+        self.photoholder = ImageTk.PhotoImage(self.image)
+        self.photo = tk.Label(self, image=self.photoholder)
 
-        registerButton.pack(fill=tk.BOTH, side=tk.LEFT)
-        stallButton.pack(fill=tk.BOTH, side=tk.LEFT)
-        pickupButton.pack(fill=tk.BOTH, side=tk.LEFT)
-        infoButton.pack(fill=tk.BOTH, side=tk.LEFT)
+        self.photo.image = self.photoholder
+        self.photo.grid(row=1, columnspan=4,column=0,sticky=tk.NSEW)
+        #self.photo.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.YES)
+        self.photo.bind('<Configure>', self._resize_image)
+
+        registerButton = tk.Button(self, height=5, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Registreer", command=lambda: controller.show_frame(RegisterPage))
+        stallButton = tk.Button(self, height=5, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Stal fiets", command=lambda: controller.show_frame(StallPage))
+        pickupButton = tk.Button(self, height=5, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Haal fiets op", command=lambda: controller.show_frame(PickupPage))
+        infoButton = tk.Button(self, height=5, justify=tk.LEFT, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, text="Informatie opvragen", command=lambda: controller.show_frame(InfoPage))
+
+        registerButton.grid(row=2, column=0, sticky=tk.EW)
+        stallButton.grid(row=2,column=1, sticky=tk.EW)
+        pickupButton.grid(row=2,column=2, sticky=tk.EW)
+        infoButton.grid(row=2,column=3, sticky=tk.EW)
+        #registerButton.pack(fill=tk.BOTH, side=tk.LEFT)
+        #stallButton.pack(fill=tk.BOTH, side=tk.LEFT)
+        #pickupButton.pack(fill=tk.BOTH, side=tk.LEFT)
+        #infoButton.pack(fill=tk.BOTH, side=tk.LEFT)
 
 class RegisterPage(tk.Frame):
     def __init__(self, parent, controller):
