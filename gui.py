@@ -4,6 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from programming_main import *
 from tkinter import messagebox
+import re
 
 import io
 
@@ -66,13 +67,73 @@ class RegisterPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+        sex = tk.IntVar()
+
         self.configure(background=background_color)
-        titelLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
-        titelLabel.pack(pady=10, padx=10)
+        #Weight for column and row configure for better positioning on grid layouty
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+        self.grid_rowconfigure(6, weight=1)
 
-        homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
+        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
+        titleLabel.grid(row=0, column=0, columnspan=3, pady=10, padx=10)
 
-        homeButton.pack(fill=tk.BOTH,side=tk.BOTTOM)
+        #Input for registering
+        #Inputs: Name, Tel, Sex, Bday
+
+        nameEntryLabel = tk.Label(self, background=background_color, text="Naam (ex. Jan Janssen):")
+        nameEntry = tk.Entry(self)
+        telEntryLabel = tk.Label(self, background=background_color, text="Telefoonnummer (ex. +31612345678):")
+        telEntry = tk.Entry(self)
+        sexLabel = tk.Label(self, background=background_color, text="Geslacht:")
+        sexButtonMan = tk.Radiobutton(self, bg=background_color, activebackground=background_color, text="Man", value=1, variable=sex)
+        sexButtonWoman = tk.Radiobutton(self, bg=background_color, activebackground=background_color, text="Vrouw", value=0, variable=sex)
+        bdayEntryLabel = tk.Label(self, background=background_color, text="Geboortedatum (ex. 01-01-2001):")
+        bdayEntry = tk.Entry(self)
+
+        registerButton = tk.Button(self, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, height=4, width=30, relief="flat", text="Registreer", command=lambda: checkField(nameEntry.get(), telEntry.get(), sex.get(), bdayEntry.get()))
+
+        registerButton.grid(row=5, column=0, columnspan=3, pady=30)
+
+        #Put all enties, radiobuttons and labels on grid
+
+        nameEntryLabel.grid(row=1, column=0, pady=10, padx=10, sticky=tk.E)
+        nameEntry.grid(row=1, column=1, sticky=tk.EW)
+        telEntryLabel.grid(row=2, column=0, pady=10, padx=10, sticky=tk.E)
+        telEntry.grid(row=2, column=1, sticky=tk.EW)
+        sexLabel.grid(row=3, column=0, pady=10, padx=10, sticky=tk.E)
+        sexButtonMan.grid(row=3, column=1,sticky=tk.W)
+        sexButtonWoman.grid(row=3, column=1)
+        bdayEntryLabel.grid(row=4, column=0,pady=10, padx=10, sticky=tk.E)
+        bdayEntry.grid(row=4, column=1, sticky=tk.EW)
+
+        #Home buttton
+        homeButton = tk.Button(self, height=4, text="Naar beginscherm", bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
+
+        homeButton.grid(row=6, column=0, columnspan=3, sticky=tk.EW+tk.S)
+
+        def checkField(name, tel, sex, bday):
+            if name == "" or tel == "" or bday == "":
+                #Popup
+                tk.messagebox.showerror("Oops", "Vul alle velden in")
+            else:
+                #Do regex check
+                matchBday = re.match('\d{2}-\d{2}-\d{4}', bday)
+                matchTel = re.match('\+\d{11}', tel)
+                if matchBday and matchTel:
+                    if matchBday.group(0) == bday and matchTel.group(0) == tel:
+                        #Send vars to programming_main, clear fields and go to StartScreen
+                        nameEntry.delete(0, tk.END)
+                        telEntry.delete(0, tk.END)
+                        bdayEntry.delete(0, tk.END)
+                        code = Register(name, tel, sex, bday)
+                        tk.messagebox.showinfo("Code", "Uw persoonlijke code is: " + str(code))
+                        controller.show_frame(StartPage)
+                    else:
+                        tk.messagebox.showerror("Oops", "Vul alle velden in zoals de voorbeelden")
+                else:
+                    tk.messagebox.showerror("Oops", "Vul alle velden in zoals de voorbeelden")
 
 class StallPage(tk.Frame):
     def StallBike(self, controller, code, bday):
@@ -81,7 +142,11 @@ class StallPage(tk.Frame):
         bday.delete("1.0",tk.END)
         code.delete("1.0",tk.END)
         if CheckAuth(code_text,bday_text):
-            Stall(code)
+            if(Stall(code_text) == 0):
+                LogAction("Er is een fiets geplaatst onder code:"+code_text)
+                messagebox.showinfo("Success", message="Uw fiets is aangemeld in ons systeem!\nTot snel!")
+            else:
+                messagebox.showerror("Helaas...", message="U heeft al een fiets aangemeld staan.\nHelaas kunt u maar 1 fiets aanmelden.")
             controller.show_frame(StartPage)
         else:
             messagebox.showerror("Ongeldig", message="Ongeldige code / geboortedatum combinatie")
@@ -111,6 +176,21 @@ class StallPage(tk.Frame):
 
 
 class PickupPage(tk.Frame):
+    def RemoveBike(self, controller, code, bday):
+        code_text = code.get("1.0",tk.END)[:-1]
+        bday_text = bday.get("1.0",tk.END)[:-1]
+        bday.delete("1.0",tk.END)
+        code.delete("1.0",tk.END)
+        if CheckAuth(code_text,bday_text):
+            if BikePickup(code_text) == 0:
+                LogAction("Er is een fiets verwijderd onder code:"+code_text)
+                messagebox.showinfo("Success", message="Uw fiets is afgemeld in ons systeem!\nVeel rijdplezier.")
+            else:
+                messagebox.showerror("Helaas", message="U had uw fiets al opgehaald.\nDronken avond gehad?")
+            controller.show_frame(StartPage)
+        else:
+            messagebox.showerror("Ongeldig", message="Ongeldige code / geboortedatum combinatie")
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
@@ -121,15 +201,18 @@ class PickupPage(tk.Frame):
 
         titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color).grid(row=0,pady=10, padx=10,columnspan=3)
         codeLabel = ttk.Label(self, text="Uw unieke nummer (ex. 6658469):", background=background_color).grid(row=1,column=0, sticky=tk.E)
-        code = tk.Text(self, height=1, width=15).grid(row=1,pady=10, padx=10,column=1, sticky=tk.W)
-        codeLabel = ttk.Label(self, text="Uw geboortedatum (ex. 15-04-1998):", background=background_color).grid(row=2,column=0, sticky=tk.E)
-        code = tk.Text(self, height=1, width=15).grid(row=2,pady=10, padx=10,column=1, sticky=tk.W)
+        code = tk.Text(self, height=1, width=15)
+        code.grid(row=1,pady=10, padx=10,column=1, sticky=tk.W)
+        bdayLabel = ttk.Label(self, text="Uw geboortedatum (ex. 15-04-1998):", background=background_color).grid(row=2,column=0, sticky=tk.E)
+        bday = tk.Text(self, height=1, width=15)
+        bday.grid(row=2,pady=10, padx=10,column=1, sticky=tk.W)
 
-        stallButton = tk.Button(self, height=4, width=30, text="Haal fiets op", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
+        stallButton = tk.Button(self, height=4, width=30, text="Haal fiets op", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: self.RemoveBike(controller, code, bday))
         stallButton.grid(row=3, column=0, columnspan=3, pady=30)
 
         homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
         homeButton.grid(row=5, column=0, columnspan=3, sticky=tk.EW+tk.S)
+        #homeButton.pack(fill=tk.BOTH,side=tk.BOTTOM)
 
 class InfoPage(tk.Frame):
     def __init__(self, parent, controller):

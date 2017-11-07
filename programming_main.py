@@ -6,11 +6,13 @@ def Register(name,tel,sex,bday):
     global c, conn
     code = random.randint(1000000,9999999)
     check_sql = "SELECT * FROM users WHERE code="+str(code)
-    result = c.execute(check_sql)
-    while result.rowcount > 0:
+    c.execute(check_sql)
+    rows = c.fetchall()
+    while len(rows) > 0:
         code = random.randint(1000000,9999999)
         check_sql = "SELECT * FROM users WHERE code="+str(code)
-        result = c.execute(check_sql)
+        c.execute(check_sql)
+        rows = c.fetchall()
     sql = "insert into users (name,tel,sex,bday,code) VALUES ('"+name+"','"+tel+"',"+str(sex)+",'"+bday+"',"+str(code)+")"
     c.execute(sql)
     print(code,"is de code voor",name)
@@ -21,20 +23,33 @@ def Stall(code):
     global c, conn
     timestamp = time.time()
     sql = "insert into storage (code,timestamp) VALUES ("+str(code)+","+str(round(timestamp))+")"
-    c.execute(sql)
+    returnval = 0
+    try:
+        c.execute(sql)
+    except:
+        returnval = -1
     print(code,"heeft een fiets gestald op",timestamp)
     conn.commit()
+    return returnval
 
 def BikePickup(code):
     global c, conn
-    sql = "DELETE FROM storage WHERE code="+str(code)
-    c.execute(sql)
-    print(code,"heeft zijn fiets opgehaald.")
-    conn.commit()
+
+    check_sql = "SELECT * FROM storage WHERE code="+str(code)
+    c.execute(check_sql)
+    rows = c.fetchall()
+    if len(rows) > 0:
+        sql = "DELETE FROM storage WHERE code="+str(code)
+        c.execute(sql)
+        print(code,"heeft zijn fiets opgehaald.")
+        conn.commit()
+        return 0
+    return -1
 
 def LogAction(text):
     global c, conn
-    sql = "INSERT INTO log (text) VALUES ("+text+")"
+    sql = "INSERT INTO log (text) VALUES (\""+text+"\")"
+    print(sql)
     c.execute(sql)
     conn.commit()
 
@@ -55,7 +70,7 @@ def CheckAuth(code, bday):
 
 def GetUserInfo(code,bday):
     try:
-        int(code)
+        int(code) #5459366 01-01-2000
     except:
         return
     if CheckAuth(code, bday):
