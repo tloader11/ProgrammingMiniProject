@@ -87,7 +87,7 @@ class StallPage(tk.Frame):
         code = tk.Text(self, height=1, width=15).grid(row=2,pady=10, padx=10,column=1, sticky=tk.W)
 
         stallButton = tk.Button(self, height=4, width=30, text="Stall Bike", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
-        stallButton.grid(row=3, column=0, columnspan=3)
+        stallButton.grid(row=3, column=0, columnspan=3, pady=30)
 
         homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
         homeButton.grid(row=5, column=0, columnspan=3, sticky=tk.EW+tk.S)
