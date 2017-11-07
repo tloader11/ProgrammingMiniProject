@@ -21,19 +21,23 @@ class NSFietsenstalling(tk.Tk):
         tk.Tk.wm_title(self, "NS-Fietsenstalling")
         tk.Tk.wm_geometry(self,"700x455")       #start screen diameters
         #tk.Tk.resizable(self, False, False)
-        container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        self.container = tk.Frame(self)
+        self.container.pack(side="top", fill="both", expand=True)
+        self.container.grid_rowconfigure(0, weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
         self.frames = {}
         for F in (StartPage, RegisterPage, StallPage, PickupPage, InfoPage, GeneralInfoPage, PersonalInfoPage):
-            frame = F(container, self)
+            frame = F(self.container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
         self.show_frame(StartPage)
 
     def show_frame(self, cont):
         frame = self.frames[cont]
+        frame.tkraise()
+    def showDisplayFrame(self,code,bday):
+        frame = PersonalInfoDisplayer(self.container,self,code,bday)
+        frame.grid(row=0, column=0, sticky="nsew")
         frame.tkraise()
 
 class StartPage(tk.Frame):
@@ -266,30 +270,93 @@ class GeneralInfoPage(tk.Frame):
         self.configure(background=background_color)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(1, weight=1)
-        self.grid_rowconfigure(2, weight=1)
+        self.grid_rowconfigure(4, weight=1)
+        operating_details = GetInfo()
+        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color).grid(row=0,pady=10, padx=10,columnspan=2)
+        statusLabel = ttk.Label(self, text="Systeem status:", background=background_color).grid(row=1,column=0, sticky=tk.E)
+        status2Label = ttk.Label(self, text=operating_details['system_status'], background=background_color).grid(row=1,column=1, sticky=tk.W)
 
-        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
-        titleLabel.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
+        counterLabel = ttk.Label(self, text="Aantal plaatsen bezet:", background=background_color).grid(row=2,column=0, sticky=tk.E)
+        counter2Label = ttk.Label(self, text=str(operating_details['counter'])+" / " + str(operating_details['total_places']), background=background_color).grid(row=2,column=1, sticky=tk.W)
+
+        copyright = ttk.Label(self, text="Gemaakt door Sjoerd, Max, Hidde, Vincent en Tristan", background=background_color).grid(row=3,column=0, pady=20, columnspan=2)
 
         homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
-        homeButton.grid(row=2, column=0, columnspan=2, sticky=tk.EW+tk.S)
+        homeButton.grid(row=4, column=0, columnspan=2, sticky=tk.EW+tk.S)
+
+class PersonalInfoDisplayer(tk.Frame):
+
+    def __init__(self, parent, controller,code,bday):
+        tk.Frame.__init__(self, parent)
+
+        code_text = code.get("1.0",tk.END)[:-1]
+        bday_text = bday.get("1.0",tk.END)[:-1]
+        bday.delete("1.0",tk.END)
+        code.delete("1.0",tk.END)
+        details = GetUserInfo(code_text,bday_text)
+        print(details)
+        if len(details) == 0:
+            messagebox.showerror("Ongeldig", message="Ongeldige code / geboortedatum combinatie")
+            controller.show_frame(StartPage)
+        else:
+            print("Fissa!!")
+            self.configure(background=background_color)
+            self.grid_columnconfigure(0, weight=1)
+            self.grid_columnconfigure(1, weight=1)
+            self.grid_rowconfigure(6, weight=1)
+            titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
+            titleLabel.grid(row=0,pady=10, padx=10,columnspan=2)
+
+            nameLabel = ttk.Label(self, text="Uw naam:", background=background_color).grid(row=1,column=0, sticky=tk.E)
+            name = ttk.Label(self, text=details[1], background=background_color).grid(row=1,column=1, sticky=tk.W)
+
+            phoneLabel = ttk.Label(self, text="Uw telefoonnummer:", background=background_color).grid(row=2,column=0, sticky=tk.E)
+            phone = ttk.Label(self, text=details[2], background=background_color).grid(row=2,column=1, sticky=tk.W)
+
+            sexLabel = ttk.Label(self, text="Uw geslacht:", background=background_color).grid(row=3,column=0, sticky=tk.E)
+            if details[3]:
+                sexval = "man"
+            else:
+                sexval = "vrouw"
+            sex = ttk.Label(self, text=sexval, background=background_color).grid(row=3,column=1, sticky=tk.W)
+
+            bdayLabel = ttk.Label(self, text="Uw geboortedatum:", background=background_color).grid(row=4,column=0, sticky=tk.E)
+            bdayText = ttk.Label(self, text=details[4], background=background_color).grid(row=4,column=1, sticky=tk.W)
+
+            bdayLabel = ttk.Label(self, text="Uw fietscode:", background=background_color).grid(row=5,column=0, sticky=tk.E)
+            bdayText = ttk.Label(self, text=str(details[5]), background=background_color).grid(row=5,column=1, sticky=tk.W)
+
+            homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
+            homeButton.grid(row=6, column=0, columnspan=2, sticky=tk.EW+tk.S)
+
 
 class PersonalInfoPage(tk.Frame):
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
         self.configure(background=background_color)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(1, weight=1)
-        self.grid_rowconfigure(2, weight=1)
+        self.grid_rowconfigure(5, weight=1)
 
-        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
-        titleLabel.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
+        titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color).grid(row=0,pady=10, padx=10,columnspan=2)
+
+        codeLabel = ttk.Label(self, text="Uw unieke nummer (ex. 6658469):", background=background_color)
+        codeLabel.grid(row=1,column=0, sticky=tk.E)
+        code = tk.Text(self, height=1, width=15)
+        code.grid(row=1,pady=10, padx=10,column=1, sticky=tk.W)
+        bdayLabel = ttk.Label(self, text="Uw geboortedatum (ex. 15-04-1998):", background=background_color)
+        bdayLabel.grid(row=2,column=0, sticky=tk.E)
+        bday = tk.Text(self, height=1, width=15)
+        bday.grid(row=2,pady=10, padx=10,column=1, sticky=tk.W)
 
         homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
-        homeButton.grid(row=2, column=0, columnspan=2, sticky=tk.EW+tk.S)
+        homeButton.grid(row=5, column=0, columnspan=2, sticky=tk.EW+tk.S)
+
+        infoButton = tk.Button(self, height=4, width=30, text="Bekijk info", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.showDisplayFrame(code,bday))
+        infoButton.grid(row=3, column=0, columnspan=2, pady=30)
+
 
 
 app = NSFietsenstalling()

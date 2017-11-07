@@ -68,11 +68,24 @@ def CheckAuth(code, bday):
             return True
     return False
 
+def GetInfo():
+    sql = "SELECT COUNT(*) as counter FROM storage"
+    c.execute(sql)
+    rows = c.fetchall()
+    returndict = dict()
+    if len(rows) > 0:
+        counter = rows[0][0]
+        returndict['counter'] = counter
+        returndict['total_places'] = 666
+        returndict['system_status'] = "OK"
+    return returndict
+
+
 def GetUserInfo(code,bday):
     try:
         int(code) #5459366 01-01-2000
     except:
-        return
+        return set()
     if CheckAuth(code, bday):
         user_sql = "SELECT * FROM users WHERE code="+str(code)
         c.execute(user_sql)
@@ -80,6 +93,8 @@ def GetUserInfo(code,bday):
         if len(rows) > 0:
             user = rows[0]
             return user
+        return set()
+    return set()
 
 if CheckAuth(8470486, "15-04-1998"):
     print("Succesvol gecheckt")
