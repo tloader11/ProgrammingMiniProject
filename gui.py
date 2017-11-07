@@ -78,8 +78,6 @@ class StallPage(tk.Frame):
     def StallBike(self, controller, code, bday):
         code_text = code.get("1.0",tk.END)[:-1]
         bday_text = bday.get("1.0",tk.END)[:-1]
-        print(code_text)
-        print(bday_text)
         bday.delete("1.0",tk.END)
         code.delete("1.0",tk.END)
         if CheckAuth(code_text,bday_text):

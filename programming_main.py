@@ -38,6 +38,10 @@ def LogAction(text):
     conn.commit()
 
 def CheckAuth(code, bday):
+    try:
+        int(code)
+    except:
+        return False
     global c, conn
     user_sql = "SELECT * FROM users WHERE code="+str(code)
     c.execute(user_sql)
@@ -48,8 +52,12 @@ def CheckAuth(code, bday):
             return True
     return False
 
-def GetUserInfo(code,tel):
-    if CheckAuth(code, tel):
+def GetUserInfo(code,bday):
+    try:
+        int(code)
+    except:
+        return
+    if CheckAuth(code, bday):
         user_sql = "SELECT * FROM users WHERE code="+str(code)
         c.execute(user_sql)
         rows = c.fetchall()
