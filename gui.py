@@ -72,6 +72,11 @@ class RegisterPage(tk.Frame):
         homeButton.pack(fill=tk.BOTH,side=tk.BOTTOM)
 
 class StallPage(tk.Frame):
+    def StallBike(self, controller, code, bday):
+        print(code,bday)
+        controller.show_frame(StartPage)
+        pass
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
@@ -82,16 +87,19 @@ class StallPage(tk.Frame):
 
         titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color).grid(row=0,pady=10, padx=10,columnspan=3)
         codeLabel = ttk.Label(self, text="Uw unieke nummer (ex. 6658469):", background=background_color).grid(row=1,column=0, sticky=tk.E)
-        code = tk.Text(self, height=1, width=15).grid(row=1,pady=10, padx=10,column=1, sticky=tk.W)
-        codeLabel = ttk.Label(self, text="Uw geboortedatum (ex. 15-04-1998):", background=background_color).grid(row=2,column=0, sticky=tk.E)
-        code = tk.Text(self, height=1, width=15).grid(row=2,pady=10, padx=10,column=1, sticky=tk.W)
+        code = tk.Text(self, height=1, width=15)
+        code.grid(row=1,pady=10, padx=10,column=1, sticky=tk.W)
+        bdayLabel = ttk.Label(self, text="Uw geboortedatum (ex. 15-04-1998):", background=background_color).grid(row=2,column=0, sticky=tk.E)
+        bday = tk.Text(self, height=1, width=15)
+        bday.grid(row=2,pady=10, padx=10,column=1, sticky=tk.W)
 
-        stallButton = tk.Button(self, height=4, width=30, text="Zet fiets in stalling", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
+        stallButton = tk.Button(self, height=4, width=30, text="Zet fiets in stalling", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: self.StallBike(controller, code.get("1.0",tk.END), bday.get("1.0",tk.END)))
         stallButton.grid(row=3, column=0, columnspan=3, pady=30)
 
         homeButton = tk.Button(self, height=4, text="Naar beginscherm", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
         homeButton.grid(row=5, column=0, columnspan=3, sticky=tk.EW+tk.S)
         #homeButton.pack(fill=tk.BOTH,side=tk.BOTTOM)
+
 
 class PickupPage(tk.Frame):
     def __init__(self, parent, controller):
