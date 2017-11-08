@@ -182,6 +182,10 @@ class StallPage(tk.Frame):
         if CheckAuth(code_text,bday_text):
             if(Stall(code_text) == 0):
                 LogAction("Er is een fiets geplaatst onder code:"+code_text)
+
+                details = GetMailFromCode(code_text)
+                SendMessage(details[0],"Beste "+details[1]+",\n\nUw fiets is zojuist aangemeld bij ons.\nWe wensen u een fijne reis!\n\nWe hopen u voldoende informatie te hebben verstrekt,\nHet NS team.")
+
                 messagebox.showinfo("Success", message="Uw fiets is aangemeld in ons systeem!\nTot snel!")
             else:
                 messagebox.showerror("Helaas...", message="U heeft al een fiets aangemeld staan.\nHelaas kunt u maar 1 fiets aanmelden.")
@@ -222,6 +226,9 @@ class PickupPage(tk.Frame):
         if CheckAuth(code_text,bday_text):
             if BikePickup(code_text) == 0:
                 LogAction("Er is een fiets verwijderd onder code:"+code_text)
+
+                details = GetMailFromCode(code_text)
+                SendMessage(details[0],"Beste "+details[1]+",\n\nUw fiets is zojuist afgemeld bij ons.\nHopelijk tot snel!\n\nWe hopen u voldoende informatie te hebben verstrekt,\nHet NS team.")
                 messagebox.showinfo("Success", message="Uw fiets is afgemeld in ons systeem!\nVeel rijdplezier.")
             else:
                 messagebox.showerror("Helaas", message="U had uw fiets al opgehaald.\nDronken avond gehad?")

@@ -84,6 +84,16 @@ def GetInfo():
         returndict['system_status'] = "OK"
     return returndict
 
+def GetMailFromCode(code):
+    sql = "SELECT mail, name FROM users WHERE code="+str(code)
+    c.execute(sql)
+    rows = c.fetchall()
+    returndict = dict()
+    if len(rows) > 0:
+        mail = rows[0][0]
+        name = rows[0][1]
+        return [mail,name]
+    return ""
 
 def GetUserInfo(code,bday):
     try:
