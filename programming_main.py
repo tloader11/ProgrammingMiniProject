@@ -1,8 +1,11 @@
 import sqlite3, random, time
+
+from gmail_connector import SendMessage
+
 conn = sqlite3.connect("database.db")
 c = conn.cursor()
 
-def Register(name,tel,sex,bday):
+def Register(name,tel,sex,bday,mail):
     global c, conn
     code = random.randint(1000000,9999999)
     check_sql = "SELECT * FROM users WHERE code="+str(code)
@@ -13,10 +16,11 @@ def Register(name,tel,sex,bday):
         check_sql = "SELECT * FROM users WHERE code="+str(code)
         c.execute(check_sql)
         rows = c.fetchall()
-    sql = "insert into users (name,tel,sex,bday,code) VALUES ('"+name+"','"+tel+"',"+str(sex)+",'"+bday+"',"+str(code)+")"
+    sql = "insert into users (name,tel,sex,bday,code,mail) VALUES ('"+name+"','"+tel+"',"+str(sex)+",'"+bday+"',"+str(code)+",\""+mail+"\")"
     c.execute(sql)
     print(code,"is de code voor",name)
     conn.commit()
+    SendMessage(mail,"Beste "+name+",\n\nU bent geregistreerd bij de NS fietsenstalling.\nUw unieke code is: "+ str(code)+". Bewaar deze goed.\n\nWe hopen u voldoende informatie te hebben verstrekt,\nHet NS team.")
     return code
 
 def Stall(code):

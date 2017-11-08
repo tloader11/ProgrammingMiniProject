@@ -26,7 +26,7 @@ class NSFietsenstalling(tk.Tk):
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
         self.frames = {}
-        for F in (StartPage, RegisterPage, StallPage, PickupPage, InfoPage, GeneralInfoPage, PersonalInfoPage):
+        for F in (StartPage, RegisterPage, StallPage, PickupPage, InfoPage, PersonalInfoPage):
             frame = F(self.container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -37,6 +37,10 @@ class NSFietsenstalling(tk.Tk):
         frame.tkraise()
     def showDisplayFrame(self,code,bday):
         frame = PersonalInfoDisplayer(self.container,self,code,bday)
+        frame.grid(row=0, column=0, sticky="nsew")
+        frame.tkraise()
+    def showInfoPage(self):
+        frame = GeneralInfoPage(self.container,self)
         frame.grid(row=0, column=0, sticky="nsew")
         frame.tkraise()
 
@@ -102,7 +106,7 @@ class RegisterPage(tk.Frame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
-        self.grid_rowconfigure(6, weight=1)
+        self.grid_rowconfigure(7, weight=1)
 
         titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
         titleLabel.grid(row=0, column=0, columnspan=3, pady=10, padx=10)
@@ -119,10 +123,12 @@ class RegisterPage(tk.Frame):
         sexButtonWoman = tk.Radiobutton(self, bg=background_color, activebackground=background_color, text="Vrouw", value=0, variable=sex)
         bdayEntryLabel = tk.Label(self, background=background_color, text="Geboortedatum (ex. 01-01-2001):")
         bdayEntry = tk.Entry(self)
+        mailEntryLabel = tk.Label(self, background=background_color, text="E-Mail (ex. ditis@eenmailadres.nl):")
+        mailEntry = tk.Entry(self)
 
-        registerButton = tk.Button(self, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, height=4, width=30, relief="flat", text="Registreer", command=lambda: checkField(nameEntry.get(), telEntry.get(), sex.get(), bdayEntry.get()))
+        registerButton = tk.Button(self, bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, height=4, width=30, relief="flat", text="Registreer", command=lambda: checkField(nameEntry.get(), telEntry.get(), sex.get(), bdayEntry.get(), mailEntry.get()))
 
-        registerButton.grid(row=5, column=0, columnspan=3, pady=30)
+        registerButton.grid(row=6, column=0, columnspan=3, pady=30)
 
         #Put all enties, radiobuttons and labels on grid
 
@@ -135,28 +141,32 @@ class RegisterPage(tk.Frame):
         sexButtonWoman.grid(row=3, column=1)
         bdayEntryLabel.grid(row=4, column=0,pady=10, padx=10, sticky=tk.E)
         bdayEntry.grid(row=4, column=1, sticky=tk.EW)
+        mailEntryLabel.grid(row=5, column=0, pady=10, padx=10, sticky=tk.E)
+        mailEntry.grid(row=5, column=1, sticky=tk.EW)
 
         #Home buttton
         homeButton = tk.Button(self, height=4, text="Naar beginscherm", bg=button_background_color, activebackground=button_active_background_color, fg=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.show_frame(StartPage))
 
-        homeButton.grid(row=6, column=0, columnspan=3, sticky=tk.EW+tk.S)
+        homeButton.grid(row=7, column=0, columnspan=3, sticky=tk.EW+tk.S)
 
-        def checkField(name, tel, sex, bday):
-            if name == "" or tel == "" or bday == "":
+        def checkField(name, tel, sex, bday, mail):
+            if name == "" or tel == "" or bday == "" or mail == "":
                 #Popup
                 tk.messagebox.showerror("Oops", "Vul alle velden in")
             else:
                 #Do regex check
                 matchBday = re.match('\d{2}-\d{2}-\d{4}', bday)
                 matchTel = re.match('\+\d{11}', tel)
-                if matchBday and matchTel:
-                    if matchBday.group(0) == bday and matchTel.group(0) == tel:
+                matchMail = re.match('.*@.*\.*.', mail)
+                if matchBday and matchTel and matchMail:
+                    if matchBday.group(0) == bday and matchTel.group(0) == tel and matchMail.group(0) == mail:
                         #Send vars to programming_main, clear fields and go to StartScreen
                         nameEntry.delete(0, tk.END)
                         telEntry.delete(0, tk.END)
                         bdayEntry.delete(0, tk.END)
-                        code = Register(name, tel, sex, bday)
-                        tk.messagebox.showinfo("Code", "Uw persoonlijke code is: " + str(code))
+                        mailEntry.delete(0, tk.END)
+                        code = Register(name, tel, sex, bday, mail)
+                        tk.messagebox.showinfo("Code", "Uw persoonlijke code is: " + str(code) + "\nDeze staat ook in uw mail.")
                         controller.show_frame(StartPage)
                     else:
                         tk.messagebox.showerror("Oops", "Vul alle velden in zoals de voorbeelden")
@@ -255,7 +265,7 @@ class InfoPage(tk.Frame):
         titleLabel = ttk.Label(self, text="NS-Fietsenstalling", font=LARGE_FONT, background=background_color)
         titleLabel.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
 
-        GeneralInfoButton = tk.Button(self, height=4, background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", text="Algemene informatie", command=lambda: controller.show_frame(GeneralInfoPage))
+        GeneralInfoButton = tk.Button(self, height=4, background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", text="Algemene informatie", command=lambda: controller.showInfoPage())
         GeneralInfoButton.grid(row=1, column=0, padx=10, pady=10, sticky=tk.EW+tk.S)
         personalInfoButton = tk.Button(self, height=4, background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", text="Persoonlijke informatie", command=lambda: controller.show_frame(PersonalInfoPage))
         personalInfoButton.grid(row=1, column=1, padx=10, pady=10, sticky=tk.EW+tk.S)
@@ -356,8 +366,6 @@ class PersonalInfoPage(tk.Frame):
 
         infoButton = tk.Button(self, height=4, width=30, text="Bekijk info", background=button_background_color, activebackground=button_active_background_color, foreground=button_foreground_color, activeforeground=button_foreground_color, relief="flat", command=lambda: controller.showDisplayFrame(code,bday))
         infoButton.grid(row=3, column=0, columnspan=2, pady=30)
-
-
 
 app = NSFietsenstalling()
 app.mainloop()
