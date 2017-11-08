@@ -52,7 +52,7 @@ class StartPage(tk.Frame):
 
     def __init__(self, parent, controller):
 
-        self.image = Image.open("NS_new.jpg")
+        self.image = Image.open("NS_new2.jpg")
         self.img_copy= self.image.copy()
 
         tk.Frame.__init__(self, parent)
