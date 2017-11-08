@@ -6,15 +6,14 @@ from tkinter import messagebox
 import re
 
 LARGE_FONT=("Verdana", 12)
-background_color="#F6D03F"
-button_background_color="#1D0065"
-button_foreground_color="white"
-button_active_background_color="#005ca0"
+background_color = "#F6D03F"
+button_background_color = "#1D0065"
+button_foreground_color = "white"
+button_active_background_color = "#005ca0"
 
 # example code = 8470486
 # example bday = 15-04-1998
 class NSFietsenstalling(tk.Tk):
-
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         tk.Tk.iconbitmap(self, default="favicon.png")
