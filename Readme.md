@@ -14,3 +14,5 @@
     <li>NS_new2.jpg</li>
     <li>favicon.png</li>
 </ul>
+
+<p>Run gui.py (<b>python gui.py</b>) (or <b>python3 gui.py</b> if both versions are installed)</p>
