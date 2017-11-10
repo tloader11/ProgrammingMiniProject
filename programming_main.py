@@ -1,11 +1,25 @@
-import sqlite3, random, time
+"""
+This is the programming_main module.
 
+This module has all the required backend functions, execept for the SendMessge function in the gmail_connector module.
+"""
+
+# Imports
+import sqlite3, random, time
 from gmail_connector import SendMessage
 
+# Vars for the connection with the database
 conn = sqlite3.connect("database.db")
 c = conn.cursor()
 
-def Register(name,tel,sex,bday,mail):
+def Register(name, tel, sex, bday, mail):
+    """
+    Registers the user in the database.
+
+    Generates a random code between 1000000 and 9999999, checks if this number is already in the database and generates another one if it's already existing.
+    Sends mail to the user with the unique code.
+    """
+
     global c, conn
     code = random.randint(1000000,9999999)
     check_sql = "SELECT * FROM users WHERE code="+str(code)
@@ -24,6 +38,10 @@ def Register(name,tel,sex,bday,mail):
     return code
 
 def Stall(code):
+    """
+    Registers a bike as stored.
+    """
+
     global c, conn
     timestamp = time.time()
     sql = "insert into storage (code,timestamp) VALUES ("+str(code)+","+str(round(timestamp))+")"
@@ -37,6 +55,9 @@ def Stall(code):
     return returnval
 
 def BikePickup(code):
+    """
+    Registers a bike as picked up.
+    """
     global c, conn
 
     check_sql = "SELECT * FROM storage WHERE code="+str(code)
@@ -51,6 +72,9 @@ def BikePickup(code):
     return -1
 
 def LogAction(text):
+    """
+    Logging to the database.
+    """
     global c, conn
     sql = "INSERT INTO log (text) VALUES (\""+text+"\")"
     print(sql)
@@ -58,6 +82,11 @@ def LogAction(text):
     conn.commit()
 
 def CheckAuth(code, bday):
+    """
+    2-factor authentication.
+    Checks if the person with the unique code is actually the right person.
+    Checked by checking in the database if the birthday is corrensponding with the unique code.
+    """
     try:
         int(code)
     except:
@@ -73,6 +102,9 @@ def CheckAuth(code, bday):
     return False
 
 def GetInfo():
+    """
+    Get general information (system status, used and total amount bikestorages).
+    """
     sql = "SELECT COUNT(*) as counter FROM storage"
     c.execute(sql)
     rows = c.fetchall()
@@ -85,6 +117,9 @@ def GetInfo():
     return returndict
 
 def GetMailFromCode(code):
+    """
+    Gets the name and mail from the user from the database with the unique code.
+    """
     sql = "SELECT mail, name FROM users WHERE code="+str(code)
     c.execute(sql)
     rows = c.fetchall()
@@ -96,6 +131,9 @@ def GetMailFromCode(code):
     return ""
 
 def GetUserInfo(code,bday):
+    """
+    Gets the personal info from the database (Also using 2-factor authentication).
+    """
     try:
         int(code) #5459366 01-01-2000
     except:

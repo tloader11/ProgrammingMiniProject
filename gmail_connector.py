@@ -1,9 +1,16 @@
-#ns.404.notfound@gmail.com
-#123456789AA
+"""
+This is the gmail_connector module.
+
+This module sends a mail message to the user
+"""
+
+# Imports
 import smtplib
 
-def SendMessage(to,text):
 
+def SendMessage(to, text):
+
+    # Vars
     gmail_user = "ns.404.notfound@gmail.com"
     gmail_pwd = "123456789AA"
     FROM = "NS 404"
@@ -24,6 +31,3 @@ def SendMessage(to,text):
         print("successfully sent the mail")
     except:
         print("failed to send mail")
-
-
-#SendMessage("ns.404.notfound@gmail.com","Gefelicteerd!\nU bent de 100000e bezoeker!\nKlik hier om uw prijs te claimen!\n\nGroeten,\nHet NS team")
